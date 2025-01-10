@@ -35,8 +35,8 @@ function App() {
   `;
 
   return (
-    <div>
-      <h1>Code highlighting example</h1>
+    <div style={{ width: '800px', height: '600px' }}>
+      <h1>React.js App</h1>
       <RealTimeCodeEditor language="javascript"></RealTimeCodeEditor>
     </div>
   );
