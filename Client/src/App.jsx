@@ -1,15 +1,19 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import axios from 'axios';
 
-import RealTimeCodeEditor from './Core/SyntaxHighlighter';
+import Home from './Core/Home';
+import MainMenu from './Core/MainMenu';
+import RealTimeCodeEditor from './Core/CodeEditor';
+
+import './App.css';
 
 function App() {
-  /*
   const [data, setData] = useState(null);
 
   useEffect(() => {
     // Fetch data from the backend
-    axios.get('http://localhost:5000/api/data')
+    axios.get('http://localhost:5000/api')
       .then((response) => {
         setData(response.data.message);
       })
@@ -19,26 +23,17 @@ function App() {
   }, []);
 
   return (
-    <div>
-      <h1>React-Node.js Integration</h1>
-      {data ? <p>{data}</p> : <p>Loading...</p>}
-    </div>
-  );
-  */
-
-  const sampleCode = `
-    function sayHello() {
-      console.log("bruh");
-    }
-
-    sayHello();
-  `;
-
-  return (
-    <div style={{ width: '800px', height: '600px' }}>
-      <h1>React.js App</h1>
-      <RealTimeCodeEditor language="javascript"></RealTimeCodeEditor>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />}></Route>
+        <Route path="/editor" element={
+          <div style={{ top: "0", left: "0", height: "100%", position: "absolute", display: 'flex', flexDirection: 'row' }}>
+            <MainMenu />
+            <RealTimeCodeEditor language="javascript"></RealTimeCodeEditor>
+          </div>
+        }></Route>
+      </Routes>
+    </Router>
   );
 }
 

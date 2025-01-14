@@ -32,6 +32,24 @@ const RealTimeCodeEditor = ({ language }) => {
       setTimeout(() => {
         e.target.selectionStart = e.target.selectionEnd = selectionStart + 1;
       }, 0);
+    } else if (e.key == '(') {
+      e.preventDefault();
+      const { selectionStart, selectionEnd } = e.target;
+      const newValue = input.substring(0, selectionStart) + '()' + input.substring(selectionEnd);
+      setInput(newValue);
+
+      setTimeout(() => {
+        e.target.selectionStart = e.target.selectionEnd = selectionStart + 1;
+      }, 0);
+    } else if (e.key == '"') {
+      e.preventDefault();
+      const { selectionStart, selectionEnd } = e.target;
+      const newValue = input.substring(0, selectionStart) + '""' + input.substring(selectionEnd);
+      setInput(newValue);
+
+      setTimeout(() => {
+        e.target.selectionStart = e.target.selectionEnd = selectionStart + 1;
+      }, 0);
     } else if (e.key == 'Enter') {
       e.preventDefault();
 
@@ -76,7 +94,7 @@ const RealTimeCodeEditor = ({ language }) => {
   }, [input, language]);
 
   return (
-    <div className="code-editor-container">
+    <div className="code-editor-container" style={{ width: "800px" }}>
       <pre ref={highlightRef} className="highlighted-code"></pre>
 
       <textarea value={input} onChange={handleInputChange} onKeyDown={handleKeyDown} placeholder="Type your code here..." className="code-editor-textarea"/>
