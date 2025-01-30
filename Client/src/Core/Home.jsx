@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 import MainMenu from './MainMenu';
 
-import './../Styling/home_style.css';
+import './../Styling/main_style.css';
 
 const Home = () => {
   return (

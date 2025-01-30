@@ -3,16 +3,20 @@ import React, { useEffect, useState, useRef } from 'react';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/monokai.css';
 
+import axios from 'axios';
+
+import MainMenu from './MainMenu';
+
 import './../Styling/syntax_style.css'
+import './../Styling/main_style.css';
 
 const RealTimeCodeEditor = ({ language }) => {
   const [input, setInput] = useState('');
-  const highlightRef = useRef(null);
-
   const handleInputChange = (e) => {
     setInput(e.target.value);
   };
 
+  // Functionality of code editor
   const handleKeyDown = (e) => {
     if (e.key == 'Tab') {
       e.preventDefault();
@@ -41,6 +45,19 @@ const RealTimeCodeEditor = ({ language }) => {
       setTimeout(() => {
         e.target.selectionStart = e.target.selectionEnd = selectionStart + 1;
       }, 0);
+    } else if (e.key == ')') {
+      const { selectionStart, selectionEnd } = e.target;
+      const previousChar = input[selectionStart - 1];
+      const currentChar = input[selectionStart];
+
+      if (previousChar == '(' && currentChar == ')')
+      {
+        e.preventDefault();
+
+        setTimeout(() => {
+          e.target.selectionStart = e.target.selectionEnd = selectionStart + 1;
+        }, 0);
+      }
     } else if (e.key == '"') {
       e.preventDefault();
       const { selectionStart, selectionEnd } = e.target;
@@ -86,18 +103,49 @@ const RealTimeCodeEditor = ({ language }) => {
       }
     }
   }
-
+  
+  // Perform syntax highlighting
+  const highlightRef = useRef(null);
   useEffect(() => {
     if (highlightRef.current) {
       highlightRef.current.innerHTML = hljs.highlight(input, { language }).value;
     }
   }, [input, language]);
 
-  return (
-    <div className="code-editor-container" style={{ width: "800px" }}>
-      <pre ref={highlightRef} className="highlighted-code"></pre>
+  // Use Axios to send post request to server containing user's code
+  const [isLoading, setIsLoading] = useState(false);
+  const [codeOutput, setOutput] = useState("");
+  const uploadCodeToServer = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
 
-      <textarea value={input} onChange={handleInputChange} onKeyDown={handleKeyDown} placeholder="Type your code here..." className="code-editor-textarea"/>
+    try {
+      const response = await axios.post("http://localhost:5000/api/submit_code", {
+        code: input,
+      });
+      console.log(response.data);
+      setOutput(response.data);
+    } catch (err) {
+      console.error('Error: ', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="main-container">
+      <MainMenu />
+      <div className="test">
+        <div className="code-editor-container" style={{ width: "800px", height: "600px" }}>
+          <pre ref={highlightRef} className="highlighted-code"></pre>
+
+          <textarea value={input} onChange={handleInputChange} onKeyDown={handleKeyDown} placeholder="Type your code here..." className="code-editor-textarea"/>
+        </div>
+
+        <button onClick={uploadCodeToServer} disabled={isLoading}>Submit: {isLoading ? 'Sending...' : 'Send Request'}</button>
+        <h1>{codeOutput}</h1>
+      </div>
+      
     </div>
   );
 };
